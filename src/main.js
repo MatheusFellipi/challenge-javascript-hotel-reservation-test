@@ -107,17 +107,6 @@ const totaldeDias = (diasDoCliente, tipoCliente) => {
 const separandoOsDias = (diasDoCliente) => {
   const dias = [];
 
-  switch (key) {
-    case value:
-      break;
-
-    case value:
-      break;
-
-    default:
-      break;
-  }
-
   diasDoCliente.map((item) => {
     if (item.toLocaleLowerCase().indexOf("mon") !== -1) {
       dias.push("mon");
