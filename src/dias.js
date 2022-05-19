@@ -1,69 +1,95 @@
-const diasSemana = ["mon", "tues", "wed", "thur", "fri"];
-const finalSemana = ["sat", "sun"];
+const hotels = require("./hoteis");
+const hoteis = hotels.hoteis;
 
-const totaldeDias = (diasDoCliente, tipoCliente) => {
-  const dias = separandoOsDias(diasDoCliente);
+module.exports = class Dias {
+  constructor(diasDoCliente, tipoCliente) {
+    this._diasDoCliente = diasDoCliente;
+    this._totalDeDias = {
+      cliente: tipoCliente,
+      semana: 0,
+      final: 0,
+    };
+    this._valorHotel = [];
+  }
 
-  let totalDeDias = {
-    cliente: tipoCliente,
-    semana: 0,
-    final: 0,
-  };
+  get totalDeDias() {
+    return this._totalDeDias;
+  }
+  get valorHotel() {
+    return this._valorHotel;
+  }
+  get melhorHotel() {
+    return this._valorHotel.sort(this.sortTotal("total", "classificacao"))[0];
+  }
 
-  dias.map((dia) => {
-    const semana = diasSemana.find(
-      (diasemana) => diasemana.toLowerCase() === dia.toLowerCase()
-    );
+  separandoOsDias() {
+    this._diasDoCliente.map((item) => {
+      if (item.toLocaleLowerCase().indexOf("mon") !== -1) {
+        this.quandidadeDeDiasSemana();
+      }
+      if (item.toLocaleLowerCase().indexOf("tues") !== -1) {
+        this.quandidadeDeDiasSemana();
+      }
+      if (item.toLocaleLowerCase().indexOf("wed") !== -1) {
+        this.quandidadeDeDiasSemana();
+      }
+      if (item.toLocaleLowerCase().indexOf("thur") !== -1) {
+        this.quandidadeDeDiasSemana();
+      }
+      if (item.toLocaleLowerCase().indexOf("fri") !== -1) {
+        this.quandidadeDeDiasSemana();
+      }
+      if (item.toLocaleLowerCase().indexOf("sat") !== -1) {
+        this.quandidadeDeDiasFinal();
+      }
+      if (item.toLocaleLowerCase().indexOf("sun") !== -1) {
+        this.quandidadeDeDiasFinal();
+      }
+    });
+    this.somaDosdias();
+  }
 
-    if (semana) {
-      totalDeDias = {
-        ...totalDeDias,
-        semana: totalDeDias.semana + 1,
+  somaDosdias() {
+    let obj = {
+      hotel: "",
+      classificacao: 0,
+      total: 0,
+    };
+
+    hoteis.map((item) => {
+      obj = {
+        hotel: item.hotel,
+        classificacao: item.classificacao,
+        total:
+          item.finalSemana[this._totalDeDias.cliente] *
+            this._totalDeDias.final +
+          item.diasSemana[this._totalDeDias.cliente] * this._totalDeDias.semana,
       };
-    }
 
-    const final = finalSemana.find(
-      (diasemana) => diasemana.toLowerCase() === dia.toLowerCase()
-    );
+      this._valorHotel.push(obj);
+    });
+  }
 
-    if (final) {
-      totalDeDias = {
-        ...totalDeDias,
-        final: totalDeDias.final + 1,
-      };
-    }
-  });
-  return totalDeDias;
+  sortTotal(array, array1) {
+    return function (a, b) {
+      if (a[array] > b[array] || a[array1] < b[array1]) {
+        return 1;
+      } else if (a[array] < b[array] || a[array1] > b[array1]) {
+        return -1;
+      }
+      return 0;
+    };
+  }
+  quandidadeDeDiasSemana() {
+    this._totalDeDias = {
+      ...this._totalDeDias,
+      semana: this._totalDeDias.semana + 1,
+    };
+  }
+  quandidadeDeDiasFinal() {
+    this._totalDeDias = {
+      ...this._totalDeDias,
+      final: this._totalDeDias.final + 1,
+    };
+  }
 };
-
-const separandoOsDias = (diasDoCliente) => {
-  const dias = [];
-
-  diasDoCliente.map((item) => {
-    if (item.toLocaleLowerCase().indexOf("mon") !== -1) {
-      dias.push("mon");
-    }
-    if (item.toLocaleLowerCase().indexOf("tues") !== -1) {
-      dias.push("tues");
-    }
-    if (item.toLocaleLowerCase().indexOf("wed") !== -1) {
-      dias.push("wed");
-    }
-    if (item.toLocaleLowerCase().indexOf("thur") !== -1) {
-      dias.push("thur");
-    }
-    if (item.toLocaleLowerCase().indexOf("fri") !== -1) {
-      dias.push("fri");
-    }
-    if (item.toLocaleLowerCase().indexOf("sat") !== -1) {
-      dias.push("sat");
-    }
-    if (item.toLocaleLowerCase().indexOf("sun") !== -1) {
-      dias.push("sun");
-    }
-  });
-
-  return dias;
-};
-
-exports.totaldeDias = totaldeDias;
